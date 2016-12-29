@@ -1,4 +1,4 @@
-# Org Pulse &#127775;
+# Org Pulse &#128147;
 
 What's happened on a GitHub Org this month?
 
