@@ -10,7 +10,7 @@ Pulling the data for [Monthly Progress reports](https://hackernoon.com/libraries
 
 The project is a work in progress, not recommended for use!
 
-Check out the open issues for a glimpse of the future: https://github.com/librariesio/org-pulse/issue.
+Check out the open issues for a glimpse of the future: https://github.com/librariesio/org-pulse/issues.
 
 ## Development
 
