@@ -15,6 +15,8 @@ total_commits = 0
 total_pull_requests = 0
 total_issues = 0
 
+puts "# Progress Report for [#{org}](https://github.com/#{org}) between #{start_date} and #{end_date}"
+
 repos.sort_by(&:stars).reverse.each do |repo|
   issues = client.issues(repo.full_name, state: 'all').select{|i| i.pull_request.nil?}
   pull_requests = client.pull_requests(repo.full_name, state: 'all')
@@ -31,13 +33,11 @@ repos.sort_by(&:stars).reverse.each do |repo|
     puts "### [#{repo.name}](https://github.com/#{repo.full_name})"
     puts "-  [#{commits.length} #{'commit'.pluralize(commits.length)}](https://github.com/#{repo.full_name}/compare/master@%7B#{Date.parse(start_date).to_time.to_i}%7D...master@%7B#{Date.parse(end_date).to_time.to_i}%7D)" if commits.length > 0
     puts "-  [#{closed_issues.length} closed  #{'issue'.pluralize(closed_issues.length)}](https://github.com/#{repo.full_name}/issues?utf8=%E2%9C%93&q=is%3Aissue%20closed%3A#{start_date}..#{end_date})" if closed_issues.length > 0
-    puts
     if merged_pull_requests.any?
       puts "#### Merged pull requests"
       merged_pull_requests.each do |pr|
         puts "- [#{pr.title}](#{pr.html_url}) by [#{pr.user.login}](#{pr.user.html_url})"
       end
-      puts
     end
   end
 end
