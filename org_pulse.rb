@@ -11,10 +11,18 @@ end_date = '2016-12-31'
 
 repos = client.org_repos(org)
 
+total_commits = 0
+total_pull_requests = 0
+total_issues = 0
+
 repos.sort_by(&:stars).reverse.each do |repo|
   issues = client.issues(repo.full_name, state: 'all').select{|i| i.pull_request.nil?}
   pull_requests = client.pull_requests(repo.full_name, state: 'all')
   commits = client.commits(repo.full_name, since: start_date, until: end_date) rescue []
+
+  total_commits += commits.length
+  total_pull_requests += pull_requests.select{|i| i.created_at && i.created_at > Date.parse(start_date).to_time && i.created_at < Date.parse(end_date).to_time }.length
+  total_issues += issues.select{|i| i.created_at && i.created_at > Date.parse(start_date).to_time && i.created_at < Date.parse(end_date).to_time }.length
 
   closed_issues = issues.select{|i| i.closed_at && i.closed_at > Date.parse(start_date).to_time && i.closed_at < Date.parse(end_date).to_time }
   merged_pull_requests = pull_requests.select{|i| i.merged_at && i.merged_at > Date.parse(start_date).to_time && i.merged_at < Date.parse(end_date).to_time }
@@ -33,3 +41,8 @@ repos.sort_by(&:stars).reverse.each do |repo|
     end
   end
 end
+
+puts "## Totals"
+puts "- Commits: #{total_commits}"
+puts "- Pull requests: #{total_pull_requests}"
+puts "- Issues: #{total_issues}"
