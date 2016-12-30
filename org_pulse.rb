@@ -11,7 +11,7 @@ end_date = '2016-12-31'
 
 repos = client.org_repos(org)
 
-repos.sort_by(&:stars).reverse.first(10).each do |repo|
+repos.sort_by(&:stars).reverse.each do |repo|
   issues = client.issues(repo.full_name, state: 'all').select{|i| i.pull_request.nil?}
   pull_requests = client.pull_requests(repo.full_name, state: 'all')
   commits = client.commits(repo.full_name, since: start_date, until: end_date) rescue []
