@@ -19,10 +19,16 @@ repos.sort_by(&:stars).reverse.each do |repo|
   merged_pull_requests = pull_requests.select{|i| i.merged_at && i.merged_at > Date.parse(start_date).to_time && i.merged_at < Date.parse(end_date).to_time }
 
   if commits.length > 0 || merged_pull_requests.length > 0 || closed_issues.length > 0
-    puts repo.name
-    puts "  #{commits.length} commits" if commits.length > 0
-    puts "  #{merged_pull_requests.length} merged pull requests" if merged_pull_requests.length > 0
-    puts "  #{closed_issues.length} closed issues" if closed_issues.length > 0
+    puts "### [#{repo.name}](https://github.com/#{repo.full_name})"
+    puts "-  [#{commits.length} commits](https://github.com/#{repo.full_name}/compare/master@%7B#{Date.parse(start_date).to_time.to_i}%7D...master@%7B#{Date.parse(end_date).to_time.to_i}%7D)" if commits.length > 0
+    puts "-  [#{closed_issues.length} closed issues](https://github.com/#{repo.full_name}/issues?utf8=%E2%9C%93&q=is%3Aissue%20closed%3A#{start_date}..#{end_date})" if closed_issues.length > 0
     puts
+    if merged_pull_requests.any?
+      puts "#### Merged pull requests"
+      merged_pull_requests.each do |pr|
+        puts "- [#{pr.title}](#{pr.html_url}) by [#{pr.user.login}](#{pr.user.html_url})"
+      end
+      puts
+    end
   end
 end
