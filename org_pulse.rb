@@ -5,8 +5,10 @@ require 'active_support/core_ext/string/inflections'
 
 # Override org and dates to customize
 org = 'librariesio'
-start_date = '2016-12-01'
-end_date = '2016-12-31'
+year = 2017
+month = 01
+start_date = Date.civil(year, month, 1).to_s
+end_date = Date.civil(year, month, -1).to_s
 
 access_token = ENV['GITHUB_TOKEN']
 client = Octokit::Client.new(access_token: access_token, auto_paginate: true)
