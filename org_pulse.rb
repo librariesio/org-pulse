@@ -2,13 +2,14 @@ require 'bundler'
 Bundler.require
 Dotenv.load
 require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/time/calculations'
 
 # Override org and dates to customize
 org = 'librariesio'
 year = 2017
 month = 01
-start_date = Date.civil(year, month, 1).to_s
-end_date = Date.civil(year, month, -1).to_s
+start_date = Date.civil(year, month, 1)
+end_date = start_date.end_of_month
 
 access_token = ENV['GITHUB_TOKEN']
 client = Octokit::Client.new(access_token: access_token, auto_paginate: true)
@@ -24,18 +25,18 @@ puts "# Progress Report for [#{org}](https://github.com/#{org}) between #{start_
 repos.sort_by(&:stars).reverse.each do |repo|
   issues = client.issues(repo.full_name, state: 'all').select{|i| i.pull_request.nil?}
   pull_requests = client.pull_requests(repo.full_name, state: 'all')
-  commits = client.commits(repo.full_name, since: start_date, until: end_date) rescue []
+  commits = client.commits(repo.full_name, since: start_date.to_s, until: end_date.to_s) rescue []
 
   total_commits += commits.length
-  total_pull_requests += pull_requests.select{|i| i.created_at && i.created_at > Date.parse(start_date).to_time && i.created_at < Date.parse(end_date).to_time }.length
-  total_issues += issues.select{|i| i.created_at && i.created_at > Date.parse(start_date).to_time && i.created_at < Date.parse(end_date).to_time }.length
+  total_pull_requests += pull_requests.select{|i| i.created_at && i.created_at > start_date.to_time && i.created_at < end_date.end_of_day }.length
+  total_issues += issues.select{|i| i.created_at && i.created_at > start_date.to_time && i.created_at < end_date.end_of_day }.length
 
-  closed_issues = issues.select{|i| i.closed_at && i.closed_at > Date.parse(start_date).to_time && i.closed_at < Date.parse(end_date).to_time }
-  merged_pull_requests = pull_requests.select{|i| i.merged_at && i.merged_at > Date.parse(start_date).to_time && i.merged_at < Date.parse(end_date).to_time }
+  closed_issues = issues.select{|i| i.closed_at && i.closed_at > start_date.to_time && i.closed_at < end_date.end_of_day }
+  merged_pull_requests = pull_requests.select{|i| i.merged_at && i.merged_at > start_date.to_time && i.merged_at < end_date.end_of_day }
 
   if commits.length > 0 || merged_pull_requests.length > 0 || closed_issues.length > 0
     puts "\n### [#{repo.name}](https://github.com/#{repo.full_name})\n"
-    puts "-  [#{commits.length} #{'commit'.pluralize(commits.length)}](https://github.com/#{repo.full_name}/compare/master@%7B#{Date.parse(start_date).to_time.to_i}%7D...master@%7B#{Date.parse(end_date).to_time.to_i}%7D)" if commits.length > 0
+    puts "-  [#{commits.length} #{'commit'.pluralize(commits.length)}](https://github.com/#{repo.full_name}/compare/master@%7B#{start_date.to_time.to_i}%7D...master@%7B#{end_date.end_of_day.to_i}%7D)" if commits.length > 0
     puts "-  [#{closed_issues.length} closed #{'issue'.pluralize(closed_issues.length)}](https://github.com/#{repo.full_name}/issues?utf8=%E2%9C%93&q=is%3Aissue%20closed%3A#{start_date}..#{end_date})" if closed_issues.length > 0
     if merged_pull_requests.any?
       puts "\n#### Merged pull requests\n"
