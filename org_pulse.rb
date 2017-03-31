@@ -7,7 +7,7 @@ require 'active_support/core_ext/time/calculations'
 # Override org and dates to customize
 org = 'librariesio'
 year = 2017
-month = 01
+month = 03
 start_date = Date.civil(year, month, 1)
 end_date = start_date.end_of_month
 
