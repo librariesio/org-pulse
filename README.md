@@ -24,13 +24,13 @@ New to Ruby? No worries! You can follow these instructions to install a local se
 
 #### Installing a Local Server
 
-First things first, you'll need to install Ruby 2.4.0. I recommend using the excellent [rbenv](https://github.com/rbenv/rbenv),
+First things first, you'll need to install Ruby 2.4.1. I recommend using the excellent [rbenv](https://github.com/rbenv/rbenv),
 and [ruby-build](https://github.com/rbenv/ruby-build):
 
 ```bash
 brew install rbenv ruby-build
-rbenv install 2.4.0
-rbenv global 2.4.0
+rbenv install 2.4.1
+rbenv global 2.4.1
 ```
 
 Now, let's install the gems from the `Gemfile` ("Gems" are synonymous with libraries in other
